@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, StatusBar, AsyncStorage } from "react-native";
+import React, { useState,useEffect } from "react";
+import { StyleSheet, Text, View, StatusBar} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import colors from "../misc/colors";
+import SearchBar from "../components/SearchBar";
+import RoundIconBtn from "../components/RoundIconBtn";
 
 const NoteScreen = ({ user,navigation }) => {
   const [greet, setGreet] = useState("");
@@ -41,13 +44,13 @@ const NoteScreen = ({ user,navigation }) => {
       <View style={styles.container}>
         <Text style={styles.header}>{`Good ${greet} ${user.name}`}</Text>
         <SearchBar containerStyle={{ marginVertical: 15 }} />
-        <FlatList
+        {/* <FlatList
           data={notes}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
           <Note onPress={()=>openNote(item)} item={item} />
           )}
-        />
+        /> */}
         {!notes.length ? (
           <View
             style={[StyleSheet.absoluteFillObject, styles.emptyHeaderContainer]}
@@ -69,7 +72,6 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
     flex: 1,
-    backgroundColor: "red",
   },
   header: {
     fontSize: 25,
@@ -79,13 +81,13 @@ const styles = StyleSheet.create({
     fontSize: 30,
     textTransform: "uppercase",
     fontWeight: "bold",
-    opacity: 0.5,
+    opacity: 0.2,
   },
   emptyHeaderContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "red",
+    zIndex:-1,
   },
   addBtn: {
     position: "absolute",
