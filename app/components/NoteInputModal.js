@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import {
   StyleSheet,
-  Text,
+  TextInput,
   View,
   StatusBar,
   Modal,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
+import colors from "../misc/colors";
+import RoundIconBtn from "./RoundIconBtn";
 
-const NoteInputModal = ({ visible }) => {
+const NoteInputModal = ({ visible, onClose, onSubmit }) => {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
 
@@ -22,12 +24,18 @@ const NoteInputModal = ({ visible }) => {
     if (valueFor === "desc") setDesc(text);
   };
 
-  const handleSubmit=()=>{
-      if(!title.trim() && !desc.trim()) return onClose();
-      onsubmit(title,desc);
-      setTitle('');
-      setDesc('');
-      onClose();
+  const handleSubmit = () => {
+    if (!title.trim() && !desc.trim()) return onClose();
+    onSubmit(title, desc);
+    setTitle("");
+    setDesc("");
+    onClose();
+  };
+
+  const closeModal=()=>{
+    setTitle('');
+    setDesc('');
+    onClose();
   }
 
   return (
@@ -35,15 +43,33 @@ const NoteInputModal = ({ visible }) => {
       <StatusBar hidden />
       <Modal visible={visible} animationType="fade">
         <View style={styles.container}>
-          <Text style={[styles.input, styles.title]} />
-          <Text style={[styles.input, styles.title]} />
+          <TextInput
+            value={title}
+            placeholder="Title"
+            style={[styles.input, styles.title]}
+            onChangeText={(text) => handleOnChangeText(text, "title")}
+          />
+          <TextInput
+            value={desc}
+            multiline
+            placeholder="Note"
+            style={[styles.input, styles.desc]}
+            onChangeText={(text) => handleOnChangeText(text, "desc")}
+          />
           <View style={styles.btnContainer}>
-            <RoundIconBtn size={15} antIconName="check" />
             <RoundIconBtn
               size={15}
-              style={{ marginLeft: 15 }}
-              antIconName="close"
+              antIconName="check"
+              onPress={handleSubmit}
             />
+            {title.trim() || desc.trim() ? (
+              <RoundIconBtn
+                size={15}
+                style={{ marginLeft: 15 }}
+                antIconName="close"
+                onPress={closeModal}
+              />
+            ) : null}
           </View>
         </View>
         <TouchableWithoutFeedback onPress={handleModalClose}>
@@ -60,7 +86,7 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
   input: {
-    borderBottomColor: 2,
+    borderBottomWidth: 2,
     borderBottomColor: colors.PRIMARY,
     fontSize: 20,
     color: colors.DARK,
@@ -75,11 +101,12 @@ const styles = StyleSheet.create({
   },
   modalBg: {
     flex: 1,
-    backgroundColor: "red",
+    zIndex: -1,
   },
   btnContainer: {
     flexDirection: "row",
     justifyContent: "center",
+    paddingVertical: 15,
   },
 });
 

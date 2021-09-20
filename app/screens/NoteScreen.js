@@ -1,14 +1,15 @@
-import React, { useState,useEffect } from "react";
-import { StyleSheet, Text, View, StatusBar} from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, StatusBar } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import colors from "../misc/colors";
 import SearchBar from "../components/SearchBar";
 import RoundIconBtn from "../components/RoundIconBtn";
+import NoteInputModal from "../components/NoteInputModal";
 
-const NoteScreen = ({ user,navigation }) => {
+const NoteScreen = ({ user, navigation }) => {
   const [greet, setGreet] = useState("");
-  const [modalVisible,setModalVisible]=useState(false);
-  const [notes,setNotes]=useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [notes, setNotes] = useState([]);
 
   const findGreet = () => {
     const hrs = new Date().getHours();
@@ -28,15 +29,16 @@ const NoteScreen = ({ user,navigation }) => {
   }, []);
 
   const handleOnSubmit = async (title, desc) => {
-    const note = { id: Date.now(), title, desc, time: Date.now() };
-    const updatedNotes = [...NoteScreen, note];
-    setNotes(updatedNotes);
-    await AsyncStorage.setItem("notes", JSON.stringify(updatedNotes));
+    console.log(title,desc);
+    // const note = { id: Date.now(), title, desc, time: Date.now() };
+    // const updatedNotes = [...NoteScreen, note];
+    // setNotes(updatedNotes);
+    // await AsyncStorage.setItem("notes", JSON.stringify(updatedNotes));
   };
 
-  const openNote = (note) =>{
-    navigation.navigate('NoteDetail',{note})
-  }
+  const openNote = (note) => {
+    navigation.navigate("NoteDetail", { note });
+  };
 
   return (
     <>
@@ -59,11 +61,16 @@ const NoteScreen = ({ user,navigation }) => {
           </View>
         ) : null}
         <RoundIconBtn
-          onPress={() => console.log("opening modal")}
+          onPress={() => setModalVisible(true)}
           antIconName="plus"
           style={styles.addBtn}
         />
       </View>
+      <NoteInputModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={handleOnSubmit}
+      />
     </>
   );
 };
@@ -87,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    zIndex:-1,
+    zIndex: -1,
   },
   addBtn: {
     position: "absolute",
