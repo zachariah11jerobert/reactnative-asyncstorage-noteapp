@@ -1,42 +1,44 @@
 import React from "react";
-import { StyleSheet, Text, ScrollView, Alert, AsyncStorage } from "react-native";
+import { StyleSheet, Text, ScrollView, View } from "react-native";
+import { useHeaderHeight } from "@react-navigation/stack";
 import colors from "../misc/colors";
+import RoundIconBtn from "./RoundIconBtn";
 
 const NoteDetail = (props) => {
   const { note } = props.route.params;
   const headerHeight = useHeaderHeight();
 
-    const deleteNote = async() =>{
-        const result = await AsyncStorage.getItem('notes');
-        let notes =[];
-        if(result !== null) notes=JSON.parse(result);
+  //   const deleteNote = async() =>{
+  //       const result = await AsyncStorage.getItem('notes');
+  //       let notes =[];
+  //       if(result !== null) notes=JSON.parse(result);
 
-        notes.filter(n => n.id !== note.id);
-        await AsyncStorage.setItem('notes',JSON.stringify(newNotes));
-        props.navigation.goBack();
-    }
+  //       notes.filter(n => n.id !== note.id);
+  //       await AsyncStorage.setItem('notes',JSON.stringify(newNotes)); 
+  //       props.navigation.goBack();
+  //   }
 
-  const displayDeleteAlert = () => {
-    Alert.alert(
-      "Are You Sure!",
-      "This action will delete your nore permanently!",
-      [
-        {
-          text: "Delete",
-          onPress: deleteNote,
-        },
-        {
-          text: "No Thanks",
-          onPress: () => console.log("no thanks"),
-        },
-      ]
-    );
-  };
+  // const displayDeleteAlert = () => {
+  //   Alert.alert(
+  //     "Are You Sure!",
+  //     "This action will delete your nore permanently!",
+  //     [
+  //       {
+  //         text: "Delete",
+  //         onPress: deleteNote,
+  //       },
+  //       {
+  //         text: "No Thanks",
+  //         onPress: () => console.log("no thanks"),
+  //       },
+  //     ]
+  //   );
+  // };
 
-  const formatData = (time) => {
+  const formatDate = (time) => {
     const date = new Date(ms);
     const day = date.getDate();
-    const month = date.getMonth();
+    const month = date.getMonth() + 1;
     const year = date.getFullYear();
     const hrs = date.getHours();
     const min = date.getMinutes();
@@ -46,28 +48,32 @@ const NoteDetail = (props) => {
   };
 
   return (
-    <ScrollView style={[styles.container, { paddingTop: headerHeight }]}>
-      <Text>{`Created At ${formatDate(note.time)}`}</Text>
-      <Text>{note.title}</Text>
-      <Text>{note.desc}</Text>
+    <>
+      <ScrollView
+        contentContainerStyle={[styles.container, { paddingTop: headerHeight }]}
+      >
+        <Text style={styles.time}>{`Created At ${formatDate(note.time)}`}</Text>
+        <Text style={styles.title}>{note.title}</Text>
+        <Text style={styles.desc}>{note.desc}</Text>
+      </ScrollView>
 
       <View style={styles.btnContainer}>
         <RoundIconBtn
           antIconName="delete"
-          style={{ backgroundColor: colors.ERROR }}
+          style={{ backgroundColor: colors.ERROR, marginBottom: 15 }}
+          onPress={() => console.log("deleting note")}
         />
         <RoundIconBtn
-          antIconName="delete"
-          style={{ backgroundColor: colors.ERROR }}
+          antIconName="edit"
+          onPress={() => console.log("editing note")}
         />
       </View>
-    </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingHorizontal: 15,
   },
   title: {
