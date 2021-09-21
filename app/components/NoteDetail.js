@@ -1,50 +1,55 @@
 import React from "react";
 import { StyleSheet, Text, ScrollView, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useHeaderHeight } from "@react-navigation/stack";
 import colors from "../misc/colors";
 import RoundIconBtn from "./RoundIconBtn";
+
+
+const formatDate = (ms) => {
+  const date = new Date(ms);
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const hrs = date.getHours();
+  const min = date.getMinutes();
+  const sec = date.getSeconds();
+
+  return `${day}/${month}/${year} - ${hrs}:${min}:${sec}`;
+};
 
 const NoteDetail = (props) => {
   const { note } = props.route.params;
   const headerHeight = useHeaderHeight();
 
-  //   const deleteNote = async() =>{
-  //       const result = await AsyncStorage.getItem('notes');
-  //       let notes =[];
-  //       if(result !== null) notes=JSON.parse(result);
+    const deleteNote = async() =>{
+        const result = await AsyncStorage.getItem('notes');
+        let notes =[];
+        if(result !== null) notes=JSON.parse(result);
 
-  //       notes.filter(n => n.id !== note.id);
-  //       await AsyncStorage.setItem('notes',JSON.stringify(newNotes)); 
-  //       props.navigation.goBack();
-  //   }
+        const newNotes = notes.filter(n => n.id !== note.id);
+        await AsyncStorage.setItem('notes',JSON.stringify(newNotes));
+        props.navigation.goBack();
+    }
 
-  // const displayDeleteAlert = () => {
-  //   Alert.alert(
-  //     "Are You Sure!",
-  //     "This action will delete your nore permanently!",
-  //     [
-  //       {
-  //         text: "Delete",
-  //         onPress: deleteNote,
-  //       },
-  //       {
-  //         text: "No Thanks",
-  //         onPress: () => console.log("no thanks"),
-  //       },
-  //     ]
-  //   );
-  // };
-
-  const formatDate = (time) => {
-    const date = new Date(ms);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hrs = date.getHours();
-    const min = date.getMinutes();
-    const sec = date.getSeconds();
-
-    return `${day}/${month}/${year} - ${hrs}:${min}:${sec}`;
+  const displayDeleteAlert = () => {
+    Alert.alert(
+      "Are You Sure!",
+      "This action will delete your nore permanently!",
+      [
+        {
+          text: "Delete",
+          onPress: deleteNote,
+        },
+        {
+          text: "No Thanks",
+          onPress: () => console.log("no thanks"),
+        },
+      ],
+      {
+        cancelable: true,
+      }
+    );
   };
 
   return (
@@ -61,7 +66,7 @@ const NoteDetail = (props) => {
         <RoundIconBtn
           antIconName="delete"
           style={{ backgroundColor: colors.ERROR, marginBottom: 15 }}
-          onPress={() => console.log("deleting note")}
+          onPress={displayDeleteAlert}
         />
         <RoundIconBtn
           antIconName="edit"
